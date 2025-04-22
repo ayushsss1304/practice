@@ -1,0 +1,59 @@
+python -m venv ml_env
+source ml_env/bin/activate        # On Linux/macOS
+ml_env\Scripts\activate           # On Windows
+
+
+jupyter notebook
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Load Wine Dataset
+from sklearn.datasets import load_wine
+wine = load_wine()
+df = pd.DataFrame(wine.data, columns=wine.feature_names)
+df['target'] = wine.target
+
+# Simple preprocessing
+X = df.drop('target', axis=1)
+y = df['target']
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Train Logistic Regression model
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+
+# Evaluate
+preds = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, preds))
+# Visualize first two features
+plt.scatter(X_train.iloc[:, 0], X_train.iloc[:, 1], c=y_train)
+plt.xlabel(wine.feature_names[0])
+plt.ylabel(wine.feature_names[1])
+plt.title("Wine Data")
+plt.show()
+
+
+pip freeze > requirements.txt
+
+
+git init
+git remote add origin https://github.com/your_username/wine-ml-pipeline.git
+
+
+git add .
+git commit -m "Initial commit: reproducible ML pipeline"
+git push -u origin master
+
+
+reproduce
+
+git clone https://github.com/your_username/wine-ml-pipeline.git
+cd wine-ml-pipeline
+python -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+jupyter notebook
