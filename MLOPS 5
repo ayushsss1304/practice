@@ -1,0 +1,53 @@
+import seaborn as sns
+df = sns.load_dataset("titanic")
+
+
+import pandas as pd
+df = pd.read_csv("titanic.csv")
+
+
+# Check missing values
+print(df.isnull().sum())
+
+# Fill or drop missing values
+df['age'].fillna(df['age'].median(), inplace=True)
+df['embarked'].fillna(df['embarked'].mode()[0], inplace=True)
+df.drop(columns=['deck'], inplace=True)  # Too many missing values
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Distribution of Age
+sns.histplot(df['age'], kde=True)
+plt.title("Age Distribution")
+plt.show()
+
+# Survival Count
+sns.countplot(x='survived', data=df)
+plt.title("Survival Count")
+plt.show()
+
+# Correlation Heatmap
+plt.figure(figsize=(8,6))
+sns.heatmap(df.corr(numeric_only=True), annot=True, cmap='coolwarm')
+plt.title("Feature Correlation")
+plt.show()
+
+# Boxplot for outliers
+sns.boxplot(x='pclass', y='age', data=df)
+plt.title("Outliers: Age by Passenger Class")
+plt.show()
+
+terminal
+jupyter nbconvert titanic_eda.ipynb --to pdf
+from ydata_profiling import ProfileReport
+profile = ProfileReport(df, title="Titanic EDA Report", explorative=True)
+profile.to_file("titanic_eda_report.html")
+profile.to_file("titanic_eda_report.pdf")
+
+git init
+git add titanic_eda.ipynb titanic_eda_report.pdf
+git commit -m "Added Titanic EDA notebook and report"
+git push -u origin main
+
