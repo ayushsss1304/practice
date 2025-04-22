@@ -1,0 +1,61 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+import joblib
+import os
+
+# 1️⃣ Data Preparation
+iris = load_iris()
+X = pd.DataFrame(iris.data, columns=iris.feature_names)
+y = pd.Series(iris.target)
+
+# Split the dataset
+x_train, x_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+# Create directory to save models
+os.makedirs("models", exist_ok=True)
+
+# Logging setup
+results = []
+
+# 2️⃣ Model Training - Version 1 (Deliberately lower performance)
+model_v1 = LogisticRegression(max_iter=50, C=0.1, solver='liblinear')  # Lower iterations + stronger regularization
+model_v1.fit(x_train, y_train)
+y_pred1 = model_v1.predict(x_test)
+acc1 = accuracy_score(y_test, y_pred1)
+joblib.dump(model_v1, "models/model_v1.pkl")
+results.append(("model_v1", acc1))
+
+# 3️⃣ Model Training - Version 2 (Better performance)
+model_v2 = LogisticRegression(max_iter=300, C=1.0, solver='liblinear')
+model_v2.fit(x_train, y_train)
+y_pred2 = model_v2.predict(x_test)
+acc2 = accuracy_score(y_test, y_pred2)
+joblib.dump(model_v2, "models/model_v2.pkl")
+results.append(("model_v2", acc2))
+
+# 4️⃣ Record the results for comparison
+print("📊 Model Version Comparison:")
+for version, acc in results:
+    print(f"{version}: Accuracy = {acc*100:.2f}%")
+
+# Optional: Save results to a CSV
+pd.DataFrame(results, columns=["Version", "Accuracy"]).to_csv("models/model_results.csv", index=False)
+
+print("\n✅ Models saved in the 'models/' folder.")
+
+
+
+
+
+git init
+git add iris_model_versioning.py models/
+git commit -m "Add v1 and v2 of iris classification model"
+git tag model-v1
+git tag model-v2
+git remote add origin <your-repo-url>
+git push origin main --tags
