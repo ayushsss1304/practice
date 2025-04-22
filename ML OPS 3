@@ -1,0 +1,44 @@
+pip install scikit-learn joblib
+
+# i. Train a Model
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+# Load Iris dataset
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Split into train and test sets
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the Logistic Regression model
+model = LogisticRegression(max_iter=200)
+model.fit(x_train, y_train)
+
+# Evaluate the model
+predictions = model.predict(x_test)
+print("Accuracy:", accuracy_score(y_test, predictions))
+
+
+# ii. Save the Model
+
+import joblib
+
+# Save model to file
+joblib.dump(model, 'iris_model.pkl')
+print("Model saved as iris_model.pkl")
+
+
+# iii. Reuse the Model
+
+# Load the saved model
+loaded_model = joblib.load('iris_model.pkl')
+print("Model loaded successfully.")
+
+# Make predictions using the loaded model
+new_predictions = loaded_model.predict(x_test)
+print("Accuracy from loaded model:", accuracy_score(y_test, new_predictions))
+
